@@ -1,145 +1,169 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="GM73 ResumeForge – A premium, modern resume builder">
-  <link rel="icon" href="assets/favicon.ico" type="image/x-icon">
-  <title>GM73 ResumeForge</title>
+<!DOCTYPE html><html lang="en" class="light"><head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GM73 ResumeForge - Build Your Professional Resume</title>
+  <meta name="description" content="Create sleek, professional resumes with AI assistance. Export to PDF in one click." />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📄</text></svg>" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
-  <style>
-    html {
-      scroll-behavior: smooth;
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        fontFamily: {
+          sans: ['Inter', 'sans-serif'],
+          serif: ['Playfair Display', 'serif']
+        },
+        extend: {
+          colors: {
+            primary: {
+              light: '#6366f1',
+              dark: '#8b5cf6',
+              custom: '#10b981'
+            },
+            secondary: {
+              light: '#f43f5e',
+              dark: '#ec4899'
+            }
+          },
+          animation: {
+            'fade-in': 'fadeIn 0.3s ease-out',
+            'float': 'float 3s ease-in-out infinite',
+            'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite'
+          },
+          keyframes: {
+            fadeIn: {
+              '0%': { opacity: '0', transform: 'translateY(8px)' },
+              '100%': { opacity: '1', transform: 'translateY(0)' }
+            },
+            float: {
+              '0%, 100%': { transform: 'translateY(0)' },
+              '50%': { transform: 'translateY(-6px)' }
+            }
+          }
+        }
+      }
     }
-  </style>
-</head>
+  </script>  <style>
+    .gradient-text {
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+    }
 
-<body class="bg-white text-gray-800 transition-colors duration-300" id="app">
-  <!-- Landing Page -->
-  <section class="min-h-screen flex flex-col justify-center items-center bg-gradient-to-br from-gray-50 to-white text-center px-4 relative overflow-hidden">
-    <div class="absolute inset-0 bg-gradient-to-br from-blue-100 to-purple-100 opacity-30 z-0"></div>
-    <div class="relative z-10 max-w-2xl">
-      <h1 class="text-5xl md:text-6xl font-bold mb-4 tracking-tight leading-tight">GM73 ResumeForge</h1>
-      <p class="text-lg md:text-xl mb-6 text-gray-700">Build a sleek, professional resume in minutes.</p>
-      <p class="text-md mb-6 text-gray-500">Powered by clean design, built for real results.</p>
-      <button onclick="document.getElementById('builder').scrollIntoView({behavior: 'smooth'})"
-        class="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-xl shadow-xl transition-all duration-300">Start Building Now</button>
-    </div>
-    <img src="assets/mockup.png" alt="Resume Preview" class="mt-10 w-full max-w-xl rounded-xl shadow-xl relative z-10">
-  </section>
+    .resume-modern .section-title {
+      @apply font-serif text-xl font-semibold mb-3 pb-2 border-b border-gray-200 dark:border-gray-700 text-gray-800 dark:text-white;
+    }
 
-  <!-- Builder Section -->
-  <section id="builder" class="py-20 px-4 md:px-10 bg-gray-50">
-    <div class="text-center mb-10">
-      <h2 class="text-3xl font-bold">Create Your Resume</h2>
-      <p class="text-gray-500">Fill out the form and see your resume take shape in real-time.</p>
-    </div>
-    <div class="flex flex-col md:flex-row gap-8 max-w-7xl mx-auto">
-      <!-- Form -->
-      <div class="md:w-1/2 bg-white p-8 rounded-2xl shadow-xl border">
-        <div class="flex justify-between items-center mb-6">
-          <h3 class="text-xl font-semibold">Resume Builder</h3>
-          <select id="themeSwitcher" onchange="switchTheme()"
-            class="border px-3 py-1 rounded text-sm text-gray-700">
-            <option value="light">Light</option>
-            <option value="dark">Dark</option>
-            <option value="custom">Custom</option>
-          </select>
-        </div>
+    .resume-classic {
+      @apply border-l-2 border-primary-light dark:border-primary-dark pl-6;
+    }
 
-        <div class="space-y-4">
-          <input type="text" placeholder="Full Name" id="fullName"
-            class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400">
-          <input type="text" placeholder="Job Title" id="jobTitle"
-            class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400">
-          <textarea placeholder="Summary" id="summary"
-            class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"></textarea>
-          <input type="text" placeholder="Skills (comma-separated)" id="skills"
-            class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400">
-          <input type="text" placeholder="Experience" id="experience"
-            class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400">
+    .fade-enter {
+      opacity: 0;
+      transform: translateY(8px);
+    }
 
-          <select id="templateSwitcher" onchange="switchTemplate()"
-            class="border px-3 py-2 rounded text-sm text-gray-700 w-full">
-            <option value="modern">Modern Template</option>
-            <option value="classic">Classic Template</option>
-          </select>
-
-          <button onclick="exportPDF()"
-            class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-xl w-full mt-4 transition-all">Download PDF</button>
-        </div>
+    .fade-enter-active {
+      opacity: 1;
+      transform: translateY(0);
+      transition: all 0.3s ease-out;
+    }
+  </style></head><body class="bg-white text-gray-900 dark:bg-gray-900 dark:text-white font-sans">
+  <header class="text-center py-10 bg-gradient-to-br from-primary-light to-purple-200 dark:from-primary-dark dark:to-gray-800">
+    <h1 class="text-5xl font-bold gradient-text bg-gradient-to-r from-blue-500 to-purple-600">GM73 ResumeForge</h1>
+    <p class="mt-2 text-lg text-gray-700 dark:text-gray-300">Build a sleek, professional resume in minutes.</p>
+  </header>  <main class="px-4 py-10 max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
+    <!-- Builder Form -->
+    <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-xl font-semibold">Resume Form</h2>
+        <select id="themeSwitcher" onchange="switchTheme()"
+          class="border px-3 py-1 rounded text-sm text-gray-700 dark:text-white">
+          <option value="light">Light</option>
+          <option value="dark">Dark</option>
+          <option value="custom">Custom</option>
+        </select>
       </div>
+      <form class="space-y-4">
+        <input type="text" id="fullName" placeholder="Full Name"
+          class="w-full p-2 border rounded focus:outline-none focus:ring-2" />
+        <input type="text" id="jobTitle" placeholder="Job Title"
+          class="w-full p-2 border rounded focus:outline-none focus:ring-2" />
+        <textarea id="summary" placeholder="Summary"
+          class="w-full p-2 border rounded focus:outline-none focus:ring-2"></textarea>
+        <input type="text" id="skills" placeholder="Skills (comma separated)"
+          class="w-full p-2 border rounded focus:outline-none focus:ring-2" />
+        <input type="text" id="experience" placeholder="Experience"
+          class="w-full p-2 border rounded focus:outline-none focus:ring-2" /><select id="templateSwitcher" onchange="switchTemplate()"
+      class="w-full border p-2 rounded text-sm text-gray-700">
+      <option value="modern">Modern Template</option>
+      <option value="classic">Classic Template</option>
+    </select>
 
-      <!-- Preview -->
-      <div id="resumePreview"
-        class="md:w-1/2 bg-white p-8 rounded-2xl shadow-xl border font-sans transition-all duration-300">
-        <h1 class="text-3xl font-bold mb-1" id="previewName">Your Name</h1>
-        <p class="text-blue-600 text-lg" id="previewTitle">Your Title</p>
-        <p class="mt-4 text-sm" id="previewSummary">Short professional summary...</p>
+    <button type="button" onclick="exportPDF()"
+      class="bg-green-600 hover:bg-green-700 text-white w-full py-2 rounded transition">Download PDF</button>
+  </form>
+</div>
 
-        <h2 class="text-lg font-semibold mt-6">Skills</h2>
-        <ul class="list-disc list-inside text-sm text-gray-700" id="previewSkills">
-          <li>Skill 1</li>
-          <li>Skill 2</li>
-        </ul>
+<!-- Preview -->
+<div id="resumePreview"
+  class="resume-modern bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg border dark:border-gray-700">
+  <h1 id="previewName" class="text-3xl font-bold">Your Name</h1>
+  <p id="previewTitle" class="text-blue-600 dark:text-blue-300">Your Title</p>
+  <p id="previewSummary" class="mt-4 text-sm">Short professional summary...</p>
 
-        <h2 class="text-lg font-semibold mt-6">Experience</h2>
-        <p class="text-sm text-gray-700" id="previewExperience">Your experience details...</p>
-      </div>
-    </div>
-  </section>
+  <h2 class="section-title">Skills</h2>
+  <ul id="previewSkills" class="list-disc list-inside text-sm text-gray-700 dark:text-gray-300">
+    <li>Skill 1</li>
+    <li>Skill 2</li>
+  </ul>
 
-  <!-- Footer -->
-  <footer class="text-center text-sm text-gray-500 py-6">
+  <h2 class="section-title">Experience</h2>
+  <p id="previewExperience" class="text-sm text-gray-700 dark:text-gray-300">Your experience details...</p>
+</div>
+
+  </main>  <footer class="text-center text-sm text-gray-500 dark:text-gray-400 py-6">
     Made with ❤️ by GM73 Technologies, 2025 ©️
-  </footer>
-
-  <!-- Scripts -->
-  <script>
+  </footer>  <script>
     const switchTheme = () => {
       const theme = document.getElementById('themeSwitcher').value;
-      const app = document.getElementById('app');
-
-      app.classList.remove('bg-white', 'bg-gray-900', 'text-gray-800', 'text-white', 'bg-green-100');
-
-      if (theme === 'dark') {
-        app.classList.add('bg-gray-900', 'text-white');
-      } else if (theme === 'custom') {
-        app.classList.add('bg-green-100', 'text-gray-800');
-      } else {
-        app.classList.add('bg-white', 'text-gray-800');
-      }
+      const root = document.documentElement;
+      root.classList.remove('light', 'dark', 'custom');
+      root.classList.add(theme);
     };
 
     const switchTemplate = () => {
       const template = document.getElementById('templateSwitcher').value;
       const resume = document.getElementById('resumePreview');
-      resume.classList.remove('border-l-4', 'pl-4');
-      if (template === 'classic') {
-        resume.classList.add('border-l-4', 'pl-4', 'border-blue-500');
-      }
+      resume.classList.remove('resume-modern', 'resume-classic');
+      resume.classList.add(`resume-${template}`);
     };
 
-    document.querySelectorAll('input, textarea').forEach(el => {
+    document.querySelectorAll('input, textarea').forEach((el) => {
       el.addEventListener('input', () => {
         document.getElementById('previewName').textContent = document.getElementById('fullName').value || 'Your Name';
         document.getElementById('previewTitle').textContent = document.getElementById('jobTitle').value || 'Your Title';
         document.getElementById('previewSummary').textContent = document.getElementById('summary').value || 'Short professional summary...';
-
-        const skills = document.getElementById('skills').value.split(',').map(s => s.trim()).filter(s => s);
+        const skills = document.getElementById('skills').value.split(',').map(s => s.trim()).filter(Boolean);
         document.getElementById('previewSkills').innerHTML = skills.map(skill => `<li>${skill}</li>`).join('');
-
         document.getElementById('previewExperience').textContent = document.getElementById('experience').value || 'Your experience details...';
       });
     });
 
-    const exportPDF = () => {
-      const element = document.getElementById('resumePreview');
-      html2pdf().from(element).save('GM73_Resume.pdf');
-    }
-  </script>
-</body>
-
-</html>
+    const exportPDF = async () => {
+      const preview = document.getElementById('resumePreview');
+      const canvas = await html2canvas(preview);
+      const imgData = canvas.toDataURL('image/png');
+      const pdf = new jspdf.jsPDF();
+      const imgProps = pdf.getImageProperties(imgData);
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+      pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+      pdf.save('GM73_Resume.pdf');
+      confetti();
+    };
+  </script></body></html>
