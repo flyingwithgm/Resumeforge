@@ -1,0 +1,116 @@
+<!DOCTYPE html><html lang="en"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="GM73 ResumeForge – A premium, modern resume builder">
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
+  <title>GM73 ResumeForge</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
+  <style>
+    html {
+      scroll-behavior: smooth;
+    }
+  </style>
+</head><body class="bg-white text-gray-800 transition-colors duration-300" id="app">
+  <!-- Landing Page -->
+  <section class="min-h-screen flex flex-col justify-center items-center bg-gradient-to-br from-white to-gray-100 text-center px-4">
+    <h1 class="text-4xl md:text-6xl font-bold mb-4">GM73 ResumeForge</h1>
+    <p class="text-lg md:text-xl mb-6">Build a sleek, professional resume in minutes.</p>
+    <p class="text-md mb-6 text-gray-500">Powered by clean design, built for real results.</p>
+    <button onclick="document.getElementById('builder').scrollIntoView({behavior: 'smooth'})"
+      class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl shadow-lg transition">Start Building Now</button>
+  </section>  <!-- Builder Section -->  <section id="builder" class="py-16 px-4 md:px-10 bg-gray-50">
+    <div class="flex flex-col md:flex-row gap-8 max-w-7xl mx-auto">
+      <!-- Form -->
+      <div class="md:w-1/2 bg-white p-6 rounded-2xl shadow-xl">
+        <div class="flex justify-between items-center mb-4">
+          <h2 class="text-2xl font-semibold">Resume Builder</h2>
+          <select id="themeSwitcher" onchange="switchTheme()"
+            class="border px-3 py-1 rounded text-sm text-gray-700">
+            <option value="light">Light</option>
+            <option value="dark">Dark</option>
+            <option value="custom">Custom</option>
+          </select>
+        </div><div class="space-y-4">
+      <input type="text" placeholder="Full Name" id="fullName"
+        class="w-full px-4 py-2 border rounded focus:outline-blue-500">
+      <input type="text" placeholder="Job Title" id="jobTitle"
+        class="w-full px-4 py-2 border rounded focus:outline-blue-500">
+      <textarea placeholder="Summary" id="summary"
+        class="w-full px-4 py-2 border rounded focus:outline-blue-500"></textarea>
+      <input type="text" placeholder="Skills (comma-separated)" id="skills"
+        class="w-full px-4 py-2 border rounded focus:outline-blue-500">
+      <input type="text" placeholder="Experience" id="experience"
+        class="w-full px-4 py-2 border rounded focus:outline-blue-500">
+      <select id="templateSwitcher" onchange="switchTemplate()"
+        class="border px-3 py-1 rounded text-sm text-gray-700 w-full">
+        <option value="modern">Modern Template</option>
+        <option value="classic">Classic Template</option>
+      </select>
+
+      <button onclick="exportPDF()"
+        class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded w-full mt-4 transition">Download PDF</button>
+    </div>
+  </div>
+
+  <!-- Preview -->
+  <div id="resumePreview"
+    class="md:w-1/2 bg-white p-6 rounded-2xl shadow-xl text-left font-sans transition-all duration-300">
+    <h1 class="text-3xl font-bold" id="previewName">Your Name</h1>
+    <p class="text-blue-600" id="previewTitle">Your Title</p>
+    <p class="mt-4" id="previewSummary">Short professional summary...</p>
+    <h2 class="text-lg font-semibold mt-6">Skills</h2>
+    <ul class="list-disc list-inside text-sm text-gray-700" id="previewSkills">
+      <li>Skill 1</li>
+      <li>Skill 2</li>
+    </ul>
+    <h2 class="text-lg font-semibold mt-6">Experience</h2>
+    <p class="text-sm text-gray-700" id="previewExperience">Your experience details...</p>
+  </div>
+</div>
+
+  </section>  <!-- Footer -->  <footer class="text-center text-sm text-gray-500 py-6">
+    Made with ❤️ by GM73 Technologies, 2025 ©️
+  </footer>  <!-- Script -->  <script>
+    const switchTheme = () => {
+      const theme = document.getElementById('themeSwitcher').value;
+      const app = document.getElementById('app');
+
+      app.classList.remove('bg-white', 'bg-gray-900', 'text-gray-800', 'text-white');
+
+      if (theme === 'dark') {
+        app.classList.add('bg-gray-900', 'text-white');
+      } else if (theme === 'custom') {
+        app.classList.add('bg-green-100', 'text-gray-800');
+      } else {
+        app.classList.add('bg-white', 'text-gray-800');
+      }
+    };
+
+    const switchTemplate = () => {
+      const template = document.getElementById('templateSwitcher').value;
+      const resume = document.getElementById('resumePreview');
+      resume.classList.remove('border-l-4', 'pl-4');
+      if (template === 'classic') {
+        resume.classList.add('border-l-4', 'pl-4', 'border-blue-500');
+      }
+    };
+
+    document.querySelectorAll('input, textarea').forEach(el => {
+      el.addEventListener('input', () => {
+        document.getElementById('previewName').textContent = document.getElementById('fullName').value || 'Your Name';
+        document.getElementById('previewTitle').textContent = document.getElementById('jobTitle').value || 'Your Title';
+        document.getElementById('previewSummary').textContent = document.getElementById('summary').value || 'Short professional summary...';
+
+        const skills = document.getElementById('skills').value.split(',').map(s => s.trim()).filter(s => s);
+        document.getElementById('previewSkills').innerHTML = skills.map(skill => `<li>${skill}</li>`).join('');
+
+        document.getElementById('previewExperience').textContent = document.getElementById('experience').value || 'Your experience details...';
+      });
+    });
+
+    const exportPDF = () => {
+      const element = document.getElementById('resumePreview');
+      html2pdf().from(element).save('GM73_Resume.pdf');
+    }
+  </script></body></html>
