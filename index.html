@@ -9,7 +9,9 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>  <script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <link rel="stylesheet" href="css/style.css">
+  <script>
     tailwind.config = {
       darkMode: 'class',
       theme: {
@@ -47,32 +49,9 @@
         }
       }
     }
-  </script>  <style>
-    .gradient-text {
-      background-clip: text;
-      -webkit-background-clip: text;
-      color: transparent;
-    }
-
-    .resume-modern .section-title {
-      @apply font-serif text-xl font-semibold mb-3 pb-2 border-b border-gray-200 dark:border-gray-700 text-gray-800 dark:text-white;
-    }
-
-    .resume-classic {
-      @apply border-l-2 border-primary-light dark:border-primary-dark pl-6;
-    }
-
-    .fade-enter {
-      opacity: 0;
-      transform: translateY(8px);
-    }
-
-    .fade-enter-active {
-      opacity: 1;
-      transform: translateY(0);
-      transition: all 0.3s ease-out;
-    }
-  </style></head><body class="bg-white text-gray-900 dark:bg-gray-900 dark:text-white font-sans">
+  </script>
+</head>
+<body class="bg-white text-gray-900 dark:bg-gray-900 dark:text-white font-sans">
   <header class="text-center py-10 bg-gradient-to-br from-primary-light to-purple-200 dark:from-primary-dark dark:to-gray-800">
     <h1 class="text-5xl font-bold gradient-text bg-gradient-to-r from-blue-500 to-purple-600">GM73 ResumeForge</h1>
     <p class="mt-2 text-lg text-gray-700 dark:text-gray-300">Build a sleek, professional resume in minutes.</p>
@@ -93,12 +72,32 @@
           class="w-full p-2 border rounded focus:outline-none focus:ring-2" />
         <input type="text" id="jobTitle" placeholder="Job Title"
           class="w-full p-2 border rounded focus:outline-none focus:ring-2" />
+
+        <h3 class="text-lg font-semibold mt-4">Contact</h3>
+        <input type="email" id="email" placeholder="Email" class="w-full p-2 border rounded focus:outline-none focus:ring-2" />
+        <input type="tel" id="phone" placeholder="Phone" class="w-full p-2 border rounded focus:outline-none focus:ring-2" />
+        <input type="url" id="linkedin" placeholder="LinkedIn Profile URL" class="w-full p-2 border rounded focus:outline-none focus:ring-2" />
+
         <textarea id="summary" placeholder="Summary"
           class="w-full p-2 border rounded focus:outline-none focus:ring-2"></textarea>
+
+        <h3 class="text-lg font-semibold mt-4">Skills</h3>
         <input type="text" id="skills" placeholder="Skills (comma separated)"
           class="w-full p-2 border rounded focus:outline-none focus:ring-2" />
-        <input type="text" id="experience" placeholder="Experience"
-          class="w-full p-2 border rounded focus:outline-none focus:ring-2" /><select id="templateSwitcher" onchange="switchTemplate()"
+
+        <h3 class="text-lg font-semibold mt-4">Experience</h3>
+        <div id="experienceContainer">
+          <!-- Experience entries will be added here -->
+        </div>
+        <button type="button" id="addExperience" class="text-sm text-blue-500 hover:underline">+ Add Experience</button>
+
+        <h3 class="text-lg font-semibold mt-4">Education</h3>
+        <div id="educationContainer">
+          <!-- Education entries will be added here -->
+        </div>
+        <button type="button" id="addEducation" class="text-sm text-blue-500 hover:underline">+ Add Education</button>
+
+        <select id="templateSwitcher" onchange="switchTemplate()"
       class="w-full border p-2 rounded text-sm text-gray-700">
       <option value="modern">Modern Template</option>
       <option value="classic">Classic Template</option>
@@ -112,58 +111,45 @@
 <!-- Preview -->
 <div id="resumePreview"
   class="resume-modern bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg border dark:border-gray-700">
-  <h1 id="previewName" class="text-3xl font-bold">Your Name</h1>
-  <p id="previewTitle" class="text-blue-600 dark:text-blue-300">Your Title</p>
-  <p id="previewSummary" class="mt-4 text-sm">Short professional summary...</p>
+  <div class="text-center mb-6">
+    <h1 id="previewName" class="text-3xl font-bold">Your Name</h1>
+    <p id="previewTitle" class="text-blue-600 dark:text-blue-300">Your Title</p>
+    <div id="previewContact" class="text-sm text-gray-600 dark:text-gray-400 mt-2">
+      <!-- Contact info will be rendered here -->
+    </div>
+  </div>
 
-  <h2 class="section-title">Skills</h2>
-  <ul id="previewSkills" class="list-disc list-inside text-sm text-gray-700 dark:text-gray-300">
-    <li>Skill 1</li>
-    <li>Skill 2</li>
-  </ul>
+  <div>
+    <h2 class="section-title">Summary</h2>
+    <p id="previewSummary" class="text-sm">Short professional summary...</p>
+  </div>
 
-  <h2 class="section-title">Experience</h2>
-  <p id="previewExperience" class="text-sm text-gray-700 dark:text-gray-300">Your experience details...</p>
+  <div class="mt-6">
+    <h2 class="section-title">Skills</h2>
+    <ul id="previewSkills" class="list-disc list-inside text-sm text-gray-700 dark:text-gray-300">
+      <li>Skill 1</li>
+      <li>Skill 2</li>
+    </ul>
+  </div>
+
+  <div class="mt-6">
+    <h2 class="section-title">Experience</h2>
+    <div id="previewExperience">
+      <!-- Experience entries will be rendered here -->
+    </div>
+  </div>
+
+  <div class="mt-6">
+    <h2 class="section-title">Education</h2>
+    <div id="previewEducation">
+      <!-- Education entries will be rendered here -->
+    </div>
+  </div>
 </div>
 
   </main>  <footer class="text-center text-sm text-gray-500 dark:text-gray-400 py-6">
     Made with ❤️ by GM73 Technologies, 2025 ©️
-  </footer>  <script>
-    const switchTheme = () => {
-      const theme = document.getElementById('themeSwitcher').value;
-      const root = document.documentElement;
-      root.classList.remove('light', 'dark', 'custom');
-      root.classList.add(theme);
-    };
-
-    const switchTemplate = () => {
-      const template = document.getElementById('templateSwitcher').value;
-      const resume = document.getElementById('resumePreview');
-      resume.classList.remove('resume-modern', 'resume-classic');
-      resume.classList.add(`resume-${template}`);
-    };
-
-    document.querySelectorAll('input, textarea').forEach((el) => {
-      el.addEventListener('input', () => {
-        document.getElementById('previewName').textContent = document.getElementById('fullName').value || 'Your Name';
-        document.getElementById('previewTitle').textContent = document.getElementById('jobTitle').value || 'Your Title';
-        document.getElementById('previewSummary').textContent = document.getElementById('summary').value || 'Short professional summary...';
-        const skills = document.getElementById('skills').value.split(',').map(s => s.trim()).filter(Boolean);
-        document.getElementById('previewSkills').innerHTML = skills.map(skill => `<li>${skill}</li>`).join('');
-        document.getElementById('previewExperience').textContent = document.getElementById('experience').value || 'Your experience details...';
-      });
-    });
-
-    const exportPDF = async () => {
-      const preview = document.getElementById('resumePreview');
-      const canvas = await html2canvas(preview);
-      const imgData = canvas.toDataURL('image/png');
-      const pdf = new jspdf.jsPDF();
-      const imgProps = pdf.getImageProperties(imgData);
-      const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-      pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
-      pdf.save('GM73_Resume.pdf');
-      confetti();
-    };
-  </script></body></html>
+  </footer>
+  <script src="js/main.js"></script>
+</body>
+</html>
